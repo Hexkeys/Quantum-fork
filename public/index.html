@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#050807">
+<link rel="manifest" href="/manifest.webmanifest">
+<title>QUANTUM // BOARD</title>
+<style>
+:root{--bg:#050807;--panel:#0a100d;--line:#173321;--green:#5dff9a;--dim:#75a687;--text:#d8ffe4}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#0b1710,#050807 55%);color:var(--text);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+header{border-bottom:1px solid var(--line);padding:18px 6%;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#050807ee;backdrop-filter:blur(10px);z-index:5}
+.logo{color:var(--green);font-weight:900;letter-spacing:3px}.status{color:#77c98e;font-size:12px}
+main{max-width:980px;margin:34px auto;padding:0 18px}.hero{border:1px solid var(--line);padding:26px;background:linear-gradient(135deg,#0a130e,#07100b);box-shadow:0 0 35px #061b0d}
+h1{margin:0 0 8px;color:var(--green);font-size:clamp(28px,6vw,54px)}p{line-height:1.6}.dim{color:var(--dim)}
+button,input,textarea{font:inherit}button{cursor:pointer;border:1px solid #287242;background:#09170e;color:var(--green);padding:10px 14px;border-radius:5px}button:hover{background:#102619}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.composer,.post{margin-top:20px;border:1px solid var(--line);background:var(--panel);padding:20px}
+input,textarea{width:100%;background:#050907;border:1px solid var(--line);color:var(--text);padding:12px;margin:7px 0 12px;outline:none}input:focus,textarea:focus{border-color:#2d874d}
+textarea{min-height:110px;resize:vertical}.post{display:grid;grid-template-columns:55px 1fr;gap:16px}.vote{display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--dim)}.vote button{padding:4px 9px}.score{color:var(--green);font-weight:bold}.meta{font-size:12px;color:var(--dim);margin-bottom:8px}.tag{color:var(--green)}.title{font-size:19px;color:#effff3;font-weight:bold}.body{white-space:pre-wrap;color:#b7d8c1}.hidden{display:none}
+</style>
+</head>
+<body>
+<header><div class="logo">[ QUANTUM // BOARD ]</div><div class="status">● NETWORK ONLINE</div></header>
+<main>
+<section class="hero">
+<div class="dim">// PRIVATE FRIEND NETWORK</div><h1>TRANSMISSION HUB</h1>
+<p class="dim">Post announcements, plans, updates and anything your crew needs to see.</p>
+<div class="actions"><button id="install">⌂ ADD TO HOME SCREEN</button><button id="notify">⚡ ENABLE NOTIFICATIONS</button><button id="composeBtn">+ NEW TRANSMISSION</button></div>
+</section>
+<section id="composer" class="composer hidden">
+<div class="dim">// CREATE TRANSMISSION</div>
+<input id="title" maxlength="140" placeholder="Subject">
+<input id="author" maxlength="32" placeholder="Your name" value="you">
+<textarea id="body" maxlength="5000" placeholder="Message..."></textarea>
+<button id="postBtn">SEND TRANSMISSION</button>
+<span id="msg" class="dim"></span>
+</section>
+<section id="feed"></section>
+</main>
+<script>
+let deferredPrompt;
+const $=id=>document.getElementById(id);
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('install').classList.remove('hidden')});
+$('install').onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null}else alert('Use your browser menu and choose “Add to Home Screen”.')};
+$('composeBtn').onclick=()=>$('composer').classList.toggle('hidden');
+async function load(){const r=await fetch('/api/posts');render(await r.json())}
+function render(posts){$('feed').innerHTML=posts.map(p=>`<article class="post"><div class="vote"><button onclick="vote('${p.id}',1)">▲</button><span class="score">${p.votes}</span><button onclick="vote('${p.id}',-1)">▼</button></div><div><div class="meta">${escapeHtml(p.author)} · ${new Date(p.createdAt).toLocaleString()} · <span class="tag">${p.tag}</span></div><div class="title">${escapeHtml(p.title)}</div><p class="body">${escapeHtml(p.body)}</p></div></article>`).join('')}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+async function vote(id,delta){await fetch('/api/posts/'+id+'/vote',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({delta})});load()}
+$('postBtn').onclick=async()=>{const title=$('title').value.trim(),body=$('body').value.trim(),author=$('author').value.trim()||'you';if(!title||!body){$('msg').textContent=' // SUBJECT AND MESSAGE REQUIRED';return}const r=await fetch('/api/posts',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({title,body,author})});if(!r.ok){$('msg').textContent=' // TRANSMISSION FAILED';return}$('title').value='';$('body').value='';$('msg').textContent=' // SENT';load()};
+async function notifications(){if(!('serviceWorker' in navigator)||!('PushManager' in window)){alert('Push notifications are not supported by this browser.');return}const cfg=await fetch('/api/config').then(r=>r.json());if(!cfg.pushEnabled){alert('Notifications need VAPID keys configured in Render.');return}const permission=await Notification.requestPermission();if(permission!=='granted')return;const reg=await navigator.serviceWorker.register('/sw.js');const sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:base64ToUint8(cfg.publicKey)});await fetch('/api/subscriptions',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(sub)});$('notify').textContent='✓ NOTIFICATIONS ENABLED'}
+function base64ToUint8(s){const p='='.repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from([...b].map(c=>c.charCodeAt(0)))}
+$('notify').onclick=notifications;
+if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(console.error);
+load();
+</script>
+</body></html>
