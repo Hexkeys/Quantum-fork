@@ -45,5 +45,5 @@ app.post('/api/posts/:id/vote', (req,res) => {
   const p=posts.find(x=>x.id===req.params.id); if(!p) return res.sendStatus(404);
   p.votes += Number(req.body?.delta) < 0 ? -1 : 1; res.json(p);
 });
-app.get('*', (_req,res) => res.sendFile(process.cwd() + '/public/index.html'));
+app.use((_req,res) => res.sendFile(process.cwd() + '/public/index.html'));
 app.listen(port,()=>console.log(`Quantum Board listening on ${port}`));
