@@ -10,3 +10,6 @@
 The site includes a password-gated friend chat room. The current demo password is configured in the client as `132`.
 
 Note: posts and chat messages are stored in memory, so a Render restart clears them. For persistent group data, use a database such as Postgres.
+
+## Google Chat webhook
+Set the Render environment variable `GOOGLE_CHAT_WEBHOOK_URL` to your Google Chat incoming-webhook URL. Keep the URL private and do not commit it to GitHub.
