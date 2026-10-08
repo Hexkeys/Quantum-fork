@@ -10,6 +10,7 @@ const posts = [];
 const chatMessages = [];
 const GOOGLE_CHAT_WEBHOOK_URL = process.env.GOOGLE_CHAT_WEBHOOK_URL || '';
 const users = new Map();
+let announcement = null;
 const sessions = new Map();
 const getSessionUser = req => {
   const token = String(req.headers.cookie || '').match(/(?:^|;\s*)qf_session=([^;]+)/)?.[1];
@@ -26,7 +27,7 @@ app.post('/api/register', (req,res) => {
   const username = String(req.body?.username || '').trim().slice(0,32);
   if (!/^[a-zA-Z0-9_]{1,32}$/.test(username)) return res.status(400).json({error:'Username must be 1-32 letters, numbers, or underscores.'});
   if (users.has(username)) return res.status(409).json({error:'Username already exists.'});
-  users.set(username, true);
+  users.set(username, {joinedAt:Date.now(), announcementSeenId:null});
   const token=crypto.randomBytes(32).toString('hex'); sessions.set(token,username);
   res.setHeader('Set-Cookie',`qf_session=${token}; HttpOnly; SameSite=Lax; Path=/`);
   res.status(201).json({username});
@@ -34,7 +35,7 @@ app.post('/api/register', (req,res) => {
 app.post('/api/join', (req,res) => {
   const username=String(req.body?.username || '').trim().slice(0,32);
   if (!/^[a-zA-Z0-9_]{1,32}$/.test(username)) return res.status(400).json({error:'Username must be 1-32 letters, numbers, or underscores.'});
-  users.set(username, true);
+  users.set(username, {joinedAt:Date.now(), announcementSeenId:null});
   const token=crypto.randomBytes(32).toString('hex'); sessions.set(token,username);
   res.setHeader('Set-Cookie',`qf_session=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=2592000`);
   res.json({username});
@@ -58,6 +59,13 @@ app.get('/api/me',(req,res)=>{
   res.json({username});
 });
 app.get('/api/posts', requireAuth, (_req,res) => res.json(posts));
+app.get('/api/announcement', requireAuth, (req,res) => {
+  const user = users.get(req.user);
+  if (!announcement) return res.json({announcement:null});
+  const fresh = user.announcementSeenId !== announcement.id;
+  if (fresh) user.announcementSeenId = announcement.id;
+  res.json({announcement:fresh ? announcement : null});
+});
 app.post('/api/chat', requireAuth, (req,res) => {
   const author = String(req.body?.author || 'you').trim().slice(0,32) || 'you';
   const text = String(req.body?.text || '').trim().slice(0,500);
@@ -81,8 +89,9 @@ app.post('/api/posts', requireAuth, (req,res) => {
   const author = String(req.body?.author || 'you').trim().slice(0,32) || 'you';
   const image = typeof req.body?.image === 'string' && req.body.image.startsWith('data:') ? req.body.image : '';
   if (!title || (!body && !image)) return res.status(400).json({error:'Subject and message or image required.'});
-  const post = {id:crypto.randomUUID(), title:title.slice(0,140), body:body.slice(0,5000), image, author, tag:'#announcement', votes:1, createdAt:Date.now()};
+  const post = {id:crypto.randomUUID(), title:title.slice(0,140), body:body.slice(0,5000), image, author, tag:req.body?.announcement === true ? '#announcement' : '#transmission', votes:1, createdAt:Date.now()};
   posts.unshift(post);
+  if (req.body?.announcement === true) announcement = post;
   res.status(201).json(post);
 });
 app.post('/api/posts/:id/vote', requireAuth, (req,res) => {
