@@ -19,7 +19,8 @@ app.post('/api/chat', (req,res) => {
   const message = {id:crypto.randomUUID(), author, text, image, createdAt:Date.now()};
   chatMessages.push(message);
   if (chatMessages.length > 200) chatMessages.shift();
-  if (GOOGLE_CHAT_WEBHOOK_URL) {
+  const broadcast = req.body?.broadcast === true;
+  if (broadcast && GOOGLE_CHAT_WEBHOOK_URL) {
     const webhookText = text ? `${author} said ${text}` : `${author} sent an image`;
     fetch(GOOGLE_CHAT_WEBHOOK_URL,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({text:webhookText})}).catch(()=>{});
   }
