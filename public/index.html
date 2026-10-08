@@ -55,7 +55,7 @@ const $=id=>document.getElementById(id);
 for(let i=1;i<=1000;i++){const d=document.createElement('div');d.className='term';d.textContent='§'+String(i).padStart(4,'0')+' '+funnyTerms[(i-1)%funnyTerms.length];$('termsScroll').appendChild(d)}
 $('termsCheck').onchange=()=>{$('termsAcceptBtn').disabled=!$('termsCheck').checked};
 $('termsAcceptBtn').onclick=()=>{if($('termsCheck').checked){sessionStorage.setItem('quantumTermsAccepted','1');$('termsOverlay').remove()}};
-if(sessionStorage.getItem('quantumTermsAccepted')==='1')$('termsOverlay').remove();
+$('termsOverlay').style.display='flex';
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('install').classList.remove('hidden')});
 $('install').onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null}else alert('Use your browser menu and choose “Add to Home Screen”.')};
 $('composeBtn').onclick=()=>$('composer').classList.toggle('hidden');
