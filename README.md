@@ -6,12 +6,7 @@
 - Build command: `npm install`
 - Start command: `npm start`
 
-## Push notifications
-Set these Render environment variables for cross-device notifications:
-- `VAPID_PUBLIC_KEY`
-- `VAPID_PRIVATE_KEY`
-- `VAPID_SUBJECT` (example: `mailto:you@example.com`)
+## Chat room
+The site includes a password-gated friend chat room. The current demo password is configured in the client as `132`.
 
-Generate VAPID keys locally with `npx web-push generate-vapid-keys`.
-
-Note: this demo stores posts/subscriptions in memory. Use a database such as Postgres for persistence before relying on it for a real group.
+Note: posts and chat messages are stored in memory, so a Render restart clears them. For persistent group data, use a database such as Postgres.
