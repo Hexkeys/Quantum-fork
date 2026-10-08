@@ -52,10 +52,23 @@ textarea{min-height:110px;resize:vertical}.post{display:grid;grid-template-colum
 <script>
 let deferredPrompt;
 const $=id=>document.getElementById(id);
+const funnyTerms=[
+'You agree that Quantum Board may judge your Wi-Fi silently.',
+'You agree to pretend you read every term.',
+'You agree that pressing random buttons is a legally questionable hobby.',
+'You agree that the green text is definitely important.',
+'You agree not to blame the admin for your own questionable posts.',
+'You agree that Quantum reserves the right to say \"skill issue\".',
+'You agree that this clause was probably unnecessary.',
+'You agree to continue scrolling even though you know you should stop.',
+'You agree that your friends will never let you forget agreeing to this.',
+'You agree that Quantum Board is cooler than whatever you were using before.'
+];
 for(let i=1;i<=1000;i++){const d=document.createElement('div');d.className='term';d.textContent='§'+String(i).padStart(4,'0')+' '+funnyTerms[(i-1)%funnyTerms.length];$('termsScroll').appendChild(d)}
 $('termsCheck').onchange=()=>{$('termsAcceptBtn').disabled=!$('termsCheck').checked};
 $('termsAcceptBtn').onclick=()=>{if($('termsCheck').checked){sessionStorage.setItem('quantumTermsAccepted','1');$('termsOverlay').remove()}};
-$('termsOverlay').style.display='flex';
+$('termsOverlay').remove();
+alert('⚠️ QUANTUM WARNING ⚠️\\n\\nYou are about to enter Quantum Board.\\n\\nBy clicking OK, you acknowledge that there are 1,000 extremely serious terms waiting for you.\\n\\nGood luck.');
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('install').classList.remove('hidden')});
 $('install').onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null}else alert('Use your browser menu and choose “Add to Home Screen”.')};
 $('composeBtn').onclick=()=>$('composer').classList.toggle('hidden');
