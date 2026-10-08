@@ -21,7 +21,7 @@ app.post('/api/chat', (req,res) => {
   if (chatMessages.length > 200) chatMessages.shift();
   const broadcast = req.body?.broadcast === true;
   if (broadcast && GOOGLE_CHAT_WEBHOOK_URL) {
-    const webhookText = text ? `${author} said ${text}` : `${author} sent an image`;
+    const webhookText = text ? `${author}👍said: ${text}` : `${author}👍sent an image`;
     fetch(GOOGLE_CHAT_WEBHOOK_URL,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({text:webhookText})}).catch(()=>{});
   }
   res.status(201).json(message);
