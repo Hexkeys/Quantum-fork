@@ -3,7 +3,7 @@ import crypto from 'node:crypto';
 
 const app = express();
 const port = process.env.PORT || 3000;
-app.use(express.json({limit:'6mb'}));
+app.use(express.json({limit:'100mb'}));
 app.use(express.static('public'));
 
 const posts = [];
@@ -14,7 +14,7 @@ app.get('/api/posts', (_req,res) => res.json(posts));
 app.post('/api/chat', (req,res) => {
   const author = String(req.body?.author || 'you').trim().slice(0,32) || 'you';
   const text = String(req.body?.text || '').trim().slice(0,500);
-  const image = typeof req.body?.image === 'string' && req.body.image.startsWith('data:image/') ? req.body.image.slice(0,4000000) : '';
+  const image = typeof req.body?.image === 'string' && req.body.image.startsWith('data:') ? req.body.image : '';
   if (!text && !image) return res.status(400).json({error:'Message or image required.'});
   const message = {id:crypto.randomUUID(), author, text, image, createdAt:Date.now()};
   chatMessages.push(message);
@@ -32,7 +32,7 @@ app.post('/api/posts', (req,res) => {
   const title = String(req.body?.title || '').trim();
   const body = String(req.body?.body || '').trim();
   const author = String(req.body?.author || 'you').trim().slice(0,32) || 'you';
-  const image = typeof req.body?.image === 'string' && req.body.image.startsWith('data:image/') ? req.body.image.slice(0,4000000) : '';
+  const image = typeof req.body?.image === 'string' && req.body.image.startsWith('data:') ? req.body.image : '';
   if (!title || (!body && !image)) return res.status(400).json({error:'Subject and message or image required.'});
   const post = {id:crypto.randomUUID(), title:title.slice(0,140), body:body.slice(0,5000), image, author, tag:'#announcement', votes:1, createdAt:Date.now()};
   posts.unshift(post);
