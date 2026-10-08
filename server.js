@@ -11,9 +11,6 @@ const chatMessages = [];
 const GOOGLE_CHAT_WEBHOOK_URL = process.env.GOOGLE_CHAT_WEBHOOK_URL || '';
 const users = new Map();
 const sessions = new Map();
-const hashPassword = (password, salt = crypto.randomBytes(16).toString('hex')) => new Promise((resolve,reject) =>
-  crypto.scrypt(password, salt, 64, (err, key) => err ? reject(err) : resolve({salt, hash:key.toString('hex')}))
-);
 const getSessionUser = req => {
   const token = String(req.headers.cookie || '').match(/(?:^|;\\s*)qf_session=([^;]+)/)?.[1];
   return token ? sessions.get(token) : null;
@@ -25,24 +22,18 @@ const requireAuth = (req,res,next) => {
   next();
 };
 
-app.post('/api/register', async (req,res) => {
+app.post('/api/register', (req,res) => {
   const username = String(req.body?.username || '').trim().slice(0,32);
-  const password = String(req.body?.password || '');
   if (!/^[a-zA-Z0-9_]{3,32}$/.test(username)) return res.status(400).json({error:'Username must be 3-32 letters, numbers, or underscores.'});
-  if (password.length < 6) return res.status(400).json({error:'Password must be at least 6 characters.'});
   if (users.has(username)) return res.status(409).json({error:'Username already exists.'});
-  users.set(username, await hashPassword(password));
+  users.set(username, true);
   const token=crypto.randomBytes(32).toString('hex'); sessions.set(token,username);
   res.setHeader('Set-Cookie',`qf_session=${token}; HttpOnly; SameSite=Lax; Path=/`);
   res.status(201).json({username});
 });
-app.post('/api/login', async (req,res) => {
+app.post('/api/login', (req,res) => {
   const username=String(req.body?.username || '').trim();
-  const password=String(req.body?.password || '');
-  const record=users.get(username);
-  if(!record) return res.status(401).json({error:'Invalid username or password.'});
-  const {hash}=await hashPassword(password,record.salt);
-  if(!crypto.timingSafeEqual(Buffer.from(hash,'hex'),Buffer.from(record.hash,'hex'))) return res.status(401).json({error:'Invalid username or password.'});
+  if(!users.has(username)) return res.status(401).json({error:'Username not found. Create an account first.'});
   const token=crypto.randomBytes(32).toString('hex'); sessions.set(token,username);
   res.setHeader('Set-Cookie',`qf_session=${token}; HttpOnly; SameSite=Lax; Path=/`);
   res.json({username});
