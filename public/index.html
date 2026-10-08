@@ -35,7 +35,7 @@ textarea{min-height:110px;resize:vertical}.post{display:grid;grid-template-colum
 <div class="dim">// FRIEND CHAT ROOM</div>
 <div id="chatMessages" class="chatMessages"></div>
 <input id="chatAuthor" maxlength="32" placeholder="Your name" value="you">
-<input id="chatText" maxlength="500" placeholder="Message"><label class="filePick">📷 ATTACH IMAGE<input id="chatImage" type="file" accept="image/*"></label>
+<input id="chatText" maxlength="500" placeholder="Message"><label class="filePick">📎 ATTACH FILE<input id="chatImage" type="file"></label>
 <label class="broadcastToggle"><input id="chatBroadcast" type="checkbox"><span>✓ BROADCAST TO GOOGLE CHAT</span></label><button id="chatSend">SEND MESSAGE</button>
 <span id="chatMsg" class="dim"></span>
 </section></section>
@@ -44,7 +44,7 @@ textarea{min-height:110px;resize:vertical}.post{display:grid;grid-template-colum
 <div class="dim">// CREATE TRANSMISSION</div>
 <input id="title" maxlength="140" placeholder="Subject">
 <input id="author" maxlength="32" placeholder="Your name" value="you">
-<textarea id="body" maxlength="5000" placeholder="Message..."></textarea><label class="filePick">📷 ATTACH IMAGE<input id="postImage" type="file" accept="image/*"></label>
+<textarea id="body" maxlength="5000" placeholder="Message..."></textarea><label class="filePick">📎 ATTACH FILE<input id="postImage" type="file"></label>
 <button id="postBtn">SEND TRANSMISSION</button>
 <span id="msg" class="dim"></span>
 </section>
@@ -563,7 +563,7 @@ async function vote(id,delta){await fetch('/api/posts/'+id+'/vote',{method:'POST
 $('postBtn').onclick=async()=>{const title=$('title').value.trim(),body=$('body').value.trim(),author=$('author').value.trim()||'you',file=$('postImage').files[0];if(!title||(!body&&!file)){ $('msg').textContent=' // SUBJECT AND MESSAGE OR IMAGE REQUIRED';return}let image='';if(file)image=await readImage(file);const r=await fetch('/api/posts',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({title,body,author,image})});if(!r.ok){$('msg').textContent=' // TRANSMISSION FAILED';return}$('title').value='';$('body').value='';$('postImage').value='';$('msg').textContent=' // SENT';load()};
 let chatTimer=null;async function loadChat(){const r=await fetch('/api/chat',{cache:'no-store'});if(r.ok){const messages=await r.json();$('chatMessages').innerHTML=messages.map(m=>{const d=document.createElement('div');d.className='chatMsg';d.innerHTML='<b>'+escapeHtml(m.author)+'</b> <span class="dim">'+new Date(m.createdAt).toLocaleTimeString()+'</span><br>'+escapeHtml(m.text||'');if(m.image){const img=document.createElement('img');img.className='attachment';img.src=m.image;img.alt='Chat image';d.appendChild(img)}return d.outerHTML}).join('');$('chatMessages').scrollTop=$('chatMessages').scrollHeight}};function startChatUpdates(){clearInterval(chatTimer);chatTimer=setInterval(loadChat,1000)}
 $('chatSend').onclick=async()=>{const author=$('chatAuthor').value.trim()||'you',text=$('chatText').value.trim(),file=$('chatImage').files[0];if(!text&&!file)return;let image='';if(file)image=await readImage(file);const r=await fetch('/api/chat',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({author,text,image,broadcast:$('chatBroadcast').checked})});if(r.ok){$('chatText').value='';$('chatImage').value='';$('chatBroadcast').checked=false;$('chatMsg').textContent=' // SENT';loadChat()}};
-function readImage(file){return new Promise((resolve,reject)=>{if(file.size>3*1024*1024){alert('IMAGE TOO LARGE — MAX 3MB');reject(new Error('too large'));return}const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
+function readImage(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
 if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(console.error);
 load();
 </script>
