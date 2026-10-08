@@ -68,7 +68,9 @@ for(let i=1;i<=1000;i++){const d=document.createElement('div');d.className='term
 $('termsCheck').onchange=()=>{$('termsAcceptBtn').disabled=!$('termsCheck').checked};
 $('termsAcceptBtn').onclick=()=>{if($('termsCheck').checked){sessionStorage.setItem('quantumTermsAccepted','1');$('termsOverlay').remove()}};
 $('termsOverlay').remove();
-alert('⚠️ QUANTUM WARNING ⚠️\\n\\nYou are about to enter Quantum Board.\\n\\nBy clicking OK, you acknowledge that there are 1,000 extremely serious terms waiting for you.\\n\\nGood luck.');
+const joined=confirm('⚠️ QUANTUM FORK — TERMS & SERVICES ⚠️\\n\\nYou are about to join QF (Quantum Fork).\\n\\nThere are 1,000 terms and services waiting for you.\\n\\nBy clicking YES, you agree to the Quantum Fork Terms & Services and confirm that you are joining QF.\\n\\nClick YES to join QF. Click NO to stay out.');
+if(!joined){document.body.innerHTML='<div style="min-height:100vh;display:grid;place-items:center;background:#050807;color:#5dff9a;font:20px monospace;text-align:center;padding:30px">ACCESS DENIED<br><br>You did not agree to join QF (Quantum Fork).</div>';throw new Error('QF terms not accepted');}
+alert('QF (Quantum Fork) JOINED.\\n\\nYou agreed to the 1,000 Quantum Fork Terms & Services.');
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('install').classList.remove('hidden')});
 $('install').onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null}else alert('Use your browser menu and choose “Add to Home Screen”.')};
 $('composeBtn').onclick=()=>$('composer').classList.toggle('hidden');
