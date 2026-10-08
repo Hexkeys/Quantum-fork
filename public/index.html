@@ -553,8 +553,8 @@ termsScroll.addEventListener('scroll',()=>{
 });
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('install').classList.remove('hidden')});
 $('install').onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null}else alert('Use your browser menu and choose “Add to Home Screen”.')};
-$('composeBtn').onclick=()=>$('composer').classList.toggle('hidden');
-$('chatBroadcast').onchange=()=>{if($('chatBroadcast').checked){$('chatSection').classList.add('hidden');clearInterval(chatTimer)}};
+$('composeBtn').onclick=()=>{ $('composer').classList.toggle('hidden'); $('chatSection').classList.add('hidden'); clearInterval(chatTimer); };
+
 $('chatOpen').onclick=()=>{const pass=prompt('ENTER CHAT PASSWORD');if(pass==='132'){$('chatSection').classList.remove('hidden');loadChat();startChatUpdates()}else if(pass!==null)alert('ACCESS DENIED')};$('chatClose').onclick=()=>{$('chatSection').classList.add('hidden');clearInterval(chatTimer)};
 async function load(){const r=await fetch('/api/posts');render(await r.json())}
 function render(posts){$('feed').innerHTML=posts.map(p=>{const img=p.image?'<img class="attachment" src="'+escapeHtml(p.image)+'" alt="Post attachment">':'';return '<article class="post"><div class="vote"><button onclick="vote(\''+p.id+'\',1)">▲</button><span class="score">'+p.votes+'</span><button onclick="vote(\''+p.id+'\',-1)">▼</button></div><div><div class="meta">'+escapeHtml(p.author)+' · '+new Date(p.createdAt).toLocaleString()+' · <span class="tag">'+p.tag+'</span></div><div class="title">'+escapeHtml(p.title)+'</div><p class="body">'+escapeHtml(p.body)+'</p>'+img+'</div></article>'}).join('')}
