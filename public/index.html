@@ -541,10 +541,11 @@ for(let i=1;i<=Infinity;i++){
 $('termsCheck').onchange=()=>{$('termsAcceptBtn').disabled=!$('termsCheck').checked};
 $('termsAcceptBtn').onclick=()=>{
   if(!$('termsCheck').checked)return;
+  localStorage.setItem('qf_terms_accepted','1');
   $('termsOverlay').remove();
   alert('QF (Quantum Fork) JOINED!\\n\\nYou agreed to all 2,500 Quantum Fork Terms & Services.');
 };
-$('termsOverlay').style.display='flex';
+$('termsOverlay').style.display=localStorage.getItem('qf_terms_accepted')==='1'?'none':'flex';
 // Keep the terms visually endless without making the page load thousands of rows at once.
 termsScroll.addEventListener('scroll',()=>{
   if(termsScroll.scrollTop+termsScroll.clientHeight>=termsScroll.scrollHeight-500){
