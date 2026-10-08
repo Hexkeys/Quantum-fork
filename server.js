@@ -12,7 +12,7 @@ const GOOGLE_CHAT_WEBHOOK_URL = process.env.GOOGLE_CHAT_WEBHOOK_URL || '';
 const users = new Map();
 const sessions = new Map();
 const getSessionUser = req => {
-  const token = String(req.headers.cookie || '').match(/(?:^|;\\s*)qf_session=([^;]+)/)?.[1];
+  const token = String(req.headers.cookie || '').match(/(?:^|;\s*)qf_session=([^;]+)/)?.[1];
   return token ? sessions.get(token) : null;
 };
 const requireAuth = (req,res,next) => {
@@ -39,7 +39,7 @@ app.post('/api/login', (req,res) => {
   res.json({username});
 });
 app.post('/api/logout',(req,res)=>{
-  const token=String(req.headers.cookie || '').match(/(?:^|;\\s*)qf_session=([^;]+)/)?.[1];
+  const token=String(req.headers.cookie || '').match(/(?:^|;\s*)qf_session=([^;]+)/)?.[1];
   if(token) sessions.delete(token);
   res.setHeader('Set-Cookie','qf_session=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0');
   res.json({ok:true});
