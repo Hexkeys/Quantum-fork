@@ -75,17 +75,17 @@ const funnyTerms=[
 'You agree that by clicking AGREE & ENTER QUANTUM, you are joining QF.'
 ];
 const termsScroll=$('termsScroll');
-for(let i=1;i<=1000;i++){
+for(let i=1;i<=2000;i++){
   const d=document.createElement('div');
   d.className='term';
-  d.textContent='§'+String(i).padStart(4,'0')+' '+funnyTerms[(i-1)%funnyTerms.length]+' (QF Clause '+i+' of 1000)';
+  d.textContent='§'+String(i).padStart(4,'0')+' '+funnyTerms[(i-1)%funnyTerms.length]+' (QF Clause '+i+' of 2000)';
   termsScroll.appendChild(d);
 }
 $('termsCheck').onchange=()=>{$('termsAcceptBtn').disabled=!$('termsCheck').checked};
 $('termsAcceptBtn').onclick=()=>{
   if(!$('termsCheck').checked)return;
   $('termsOverlay').remove();
-  alert('QF (Quantum Fork) JOINED!\\n\\nYou agreed to all 1,000 Quantum Fork Terms & Services.');
+  alert('QF (Quantum Fork) JOINED!\\n\\nYou agreed to all 2,000 Quantum Fork Terms & Services.');
 };
 $('termsOverlay').style.display='flex';
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('install').classList.remove('hidden')});
