@@ -58,6 +58,7 @@ async function joinQuantum(){const username=$('loginUser').value.trim();if(!user
 $('authBtn').onclick=joinQuantum;
 $('loginUser').addEventListener('keydown',e=>{if(e.key==='Enter')joinQuantum()});
 $('logoutBtn').onclick=async()=>{await fetch('/api/logout',{method:'POST'});location.reload()};
+const funnyTerms=[
 "By joining QF, you are officially joining QF. This is not a drill.",
 "You agree that joining QF means you have joined QF.",
 "You acknowledge that the JOIN button was, in fact, a JOIN button.",
