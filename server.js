@@ -6,11 +6,7 @@ const port = process.env.PORT || 3000;
 app.use(express.json({limit:'100kb'}));
 app.use(express.static('public'));
 
-const posts = [
-  {id: crypto.randomUUID(), title:'WELCOME TO QUANTUM BOARD', body:'This is the new command center.', author:'root', tag:'#system', votes:17, createdAt:Date.now()},
-  {id: crypto.randomUUID(), title:'FRIDAY // AFTER-DARK RUN', body:'Meet at the usual spot. Bring a jacket.', author:'nightshift', tag:'#plans', votes:11, createdAt:Date.now()-60000},
-  {id: crypto.randomUUID(), title:'NEW RULE: NO SPOILERS', body:'Keep the ending out of chat until Saturday.', author:'cipher', tag:'#important', votes:8, createdAt:Date.now()-120000}
-];
+const posts = [];
 const chatMessages = [];
 
 app.get('/api/posts', (_req,res) => res.json(posts));
