@@ -53,30 +53,42 @@ textarea{min-height:110px;resize:vertical}.post{display:grid;grid-template-colum
 let deferredPrompt;
 const $=id=>document.getElementById(id);
 const funnyTerms=[
-'You agree to use QF responsibly.',
-'You agree that Quantum Fork is the place for transmissions.',
-'You agree to respect the other people using QF.',
-'You agree not to spam the board.',
-'You agree that the green text is important.',
-'You agree that clicking random buttons may produce consequences.',
-'You agree to read this term even though it is probably obvious.',
-'You agree that the admin is not responsible for your questionable posts.',
+'You agree to use QF (Quantum Fork) responsibly.',
+'You agree to respect everyone using QF.',
+'You agree not to spam the Quantum Fork board.',
+'You agree to keep your transmissions reasonably understandable.',
+'You agree that the green text is probably important.',
+'You agree not to blame the admin for your own posts.',
 'You agree that QF may contain extremely serious nonsense.',
-'You agree that this is definitely not a 1000-page corporate contract.'
+'You agree to read the terms even when they become suspiciously repetitive.',
+'You agree that clicking buttons without reading them is your own decision.',
+'You agree that Quantum Fork is cooler than it needs to be.',
+'You agree that the admin may say “skill issue” when appropriate.',
+'You agree that this clause exists because 1,000 clauses sounded funnier.',
+'You agree to keep the peace in the friend network.',
+'You agree not to intentionally break the website.',
+'You agree that QF is a friend network, not a government agency.',
+'You agree that your posts should follow the basic rules of common sense.',
+'You agree that Quantum Fork reserves the right to be unnecessarily dramatic.',
+'You agree that every numbered clause counts as part of these Terms & Services.',
+'You agree that this is a humorous Terms & Services experience.',
+'You agree that by clicking AGREE & ENTER QUANTUM, you are joining QF.'
 ];
 const termsScroll=$('termsScroll');
 for(let i=1;i<=1000;i++){
   const d=document.createElement('div');
   d.className='term';
-  d.textContent='§'+String(i).padStart(4,'0')+' '+funnyTerms[(i-1)%funnyTerms.length];
+  d.textContent='§'+String(i).padStart(4,'0')+' '+funnyTerms[(i-1)%funnyTerms.length]+' (QF Clause '+i+' of 1000)';
   termsScroll.appendChild(d);
 }
 $('termsCheck').onchange=()=>{$('termsAcceptBtn').disabled=!$('termsCheck').checked};
-$('termsAcceptBtn').onclick=()=>{if($('termsCheck').checked){sessionStorage.setItem('quantumTermsAccepted','1');$('termsOverlay').remove()}};
+$('termsAcceptBtn').onclick=()=>{
+  if(!$('termsCheck').checked)return;
+  $('termsOverlay').remove();
+  alert('QF (Quantum Fork) JOINED!\\n\\nYou agreed to all 1,000 Quantum Fork Terms & Services.');
+};
 $('termsOverlay').style.display='flex';
-const joined=confirm('⚠️ QUANTUM FORK — TERMS & SERVICES ⚠️\\n\\nYou are about to join QF (Quantum Fork).\\n\\nThe 1,000 Terms & Services will now be shown.\\n\\nBy clicking YES, you agree to the Quantum Fork Terms & Services and confirm that you are joining QF.\\n\\nClick YES to join QF. Click NO to stay out.');
-if(!joined){document.body.innerHTML='<div style="min-height:100vh;display:grid;place-items:center;background:#050807;color:#5dff9a;font:20px monospace;text-align:center;padding:30px">ACCESS DENIED<br><br>You did not agree to join QF (Quantum Fork).</div>';throw new Error('QF terms not accepted');}
-alert('QF (Quantum Fork) JOINED.\\n\\nYou agreed to the 1,000 Quantum Fork Terms & Services.\\n\\nThe complete list is displayed on the page.');\nwindow.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('install').classList.remove('hidden')});
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('install').classList.remove('hidden')});
 $('install').onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null}else alert('Use your browser menu and choose “Add to Home Screen”.')};
 $('composeBtn').onclick=()=>$('composer').classList.toggle('hidden');
 $('chatOpen').onclick=()=>{const pass=prompt('ENTER CHAT PASSWORD');if(pass==='132'){$('chat').classList.toggle('hidden');loadChat();startChatUpdates()}else if(pass!==null)alert('ACCESS DENIED')};
