@@ -53,25 +53,30 @@ textarea{min-height:110px;resize:vertical}.post{display:grid;grid-template-colum
 let deferredPrompt;
 const $=id=>document.getElementById(id);
 const funnyTerms=[
-'You agree that Quantum Board may judge your Wi-Fi silently.',
-'You agree to pretend you read every term.',
-'You agree that pressing random buttons is a legally questionable hobby.',
-'You agree that the green text is definitely important.',
-'You agree not to blame the admin for your own questionable posts.',
-'You agree that Quantum reserves the right to say \"skill issue\".',
-'You agree that this clause was probably unnecessary.',
-'You agree to continue scrolling even though you know you should stop.',
-'You agree that your friends will never let you forget agreeing to this.',
-'You agree that Quantum Board is cooler than whatever you were using before.'
+'You agree to use QF responsibly.',
+'You agree that Quantum Fork is the place for transmissions.',
+'You agree to respect the other people using QF.',
+'You agree not to spam the board.',
+'You agree that the green text is important.',
+'You agree that clicking random buttons may produce consequences.',
+'You agree to read this term even though it is probably obvious.',
+'You agree that the admin is not responsible for your questionable posts.',
+'You agree that QF may contain extremely serious nonsense.',
+'You agree that this is definitely not a 1000-page corporate contract.'
 ];
-for(let i=1;i<=1000;i++){const d=document.createElement('div');d.className='term';d.textContent='§'+String(i).padStart(4,'0')+' '+funnyTerms[(i-1)%funnyTerms.length];$('termsScroll').appendChild(d)}
+const termsScroll=$('termsScroll');
+for(let i=1;i<=1000;i++){
+  const d=document.createElement('div');
+  d.className='term';
+  d.textContent='§'+String(i).padStart(4,'0')+' '+funnyTerms[(i-1)%funnyTerms.length];
+  termsScroll.appendChild(d);
+}
 $('termsCheck').onchange=()=>{$('termsAcceptBtn').disabled=!$('termsCheck').checked};
 $('termsAcceptBtn').onclick=()=>{if($('termsCheck').checked){sessionStorage.setItem('quantumTermsAccepted','1');$('termsOverlay').remove()}};
-$('termsOverlay').remove();
-const joined=confirm('⚠️ QUANTUM FORK — TERMS & SERVICES ⚠️\\n\\nYou are about to join QF (Quantum Fork).\\n\\nThere are 1,000 terms and services waiting for you.\\n\\nBy clicking YES, you agree to the Quantum Fork Terms & Services and confirm that you are joining QF.\\n\\nClick YES to join QF. Click NO to stay out.');
+$('termsOverlay').style.display='flex';
+const joined=confirm('⚠️ QUANTUM FORK — TERMS & SERVICES ⚠️\\n\\nYou are about to join QF (Quantum Fork).\\n\\nThe 1,000 Terms & Services will now be shown.\\n\\nBy clicking YES, you agree to the Quantum Fork Terms & Services and confirm that you are joining QF.\\n\\nClick YES to join QF. Click NO to stay out.');
 if(!joined){document.body.innerHTML='<div style="min-height:100vh;display:grid;place-items:center;background:#050807;color:#5dff9a;font:20px monospace;text-align:center;padding:30px">ACCESS DENIED<br><br>You did not agree to join QF (Quantum Fork).</div>';throw new Error('QF terms not accepted');}
-alert('QF (Quantum Fork) JOINED.\\n\\nYou agreed to the 1,000 Quantum Fork Terms & Services.');
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('install').classList.remove('hidden')});
+alert('QF (Quantum Fork) JOINED.\\n\\nYou agreed to the 1,000 Quantum Fork Terms & Services.\\n\\nThe complete list is displayed on the page.');\nwindow.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('install').classList.remove('hidden')});
 $('install').onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null}else alert('Use your browser menu and choose “Add to Home Screen”.')};
 $('composeBtn').onclick=()=>$('composer').classList.toggle('hidden');
 $('chatOpen').onclick=()=>{const pass=prompt('ENTER CHAT PASSWORD');if(pass==='132'){$('chat').classList.toggle('hidden');loadChat();startChatUpdates()}else if(pass!==null)alert('ACCESS DENIED')};
