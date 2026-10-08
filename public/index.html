@@ -524,11 +524,12 @@ const funnyTerms=["By joining QF, you are officially joining QF. This is not a d
 "You agree that this final batch exists to make the list even more ridiculous."
 ];
 const termsScroll=$('termsScroll');
-for(let i=1;i<=2500;i++){
+for(let i=1;i<=Infinity;i++){
   const d=document.createElement('div');
   d.className='term';
   d.textContent='§'+String(i).padStart(4,'0')+' '+funnyTerms[(i-1)%funnyTerms.length]+' (QF Clause '+i+' of 2500)';
   termsScroll.appendChild(d);
+  if(i>=5000) break;
 }
 $('termsCheck').onchange=()=>{$('termsAcceptBtn').disabled=!$('termsCheck').checked};
 $('termsAcceptBtn').onclick=()=>{
@@ -537,6 +538,18 @@ $('termsAcceptBtn').onclick=()=>{
   alert('QF (Quantum Fork) JOINED!\\n\\nYou agreed to all 2,500 Quantum Fork Terms & Services.');
 };
 $('termsOverlay').style.display='flex';
+// Keep the terms visually endless without making the page load thousands of rows at once.
+termsScroll.addEventListener('scroll',()=>{
+  if(termsScroll.scrollTop+termsScroll.clientHeight>=termsScroll.scrollHeight-500){
+    const start=termsScroll.children.length+1;
+    for(let i=start;i<start+250;i++){
+      const d=document.createElement('div');
+      d.className='term';
+      d.textContent='§'+String(i).padStart(4,'0')+' '+funnyTerms[(i-1)%funnyTerms.length]+' (QF Clause '+i+' of ∞)';
+      termsScroll.appendChild(d);
+    }
+  }
+});
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('install').classList.remove('hidden')});
 $('install').onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null}else alert('Use your browser menu and choose “Add to Home Screen”.')};
 $('composeBtn').onclick=()=>$('composer').classList.toggle('hidden');
