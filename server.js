@@ -24,12 +24,20 @@ const requireAuth = (req,res,next) => {
 
 app.post('/api/register', (req,res) => {
   const username = String(req.body?.username || '').trim().slice(0,32);
-  if (!/^[a-zA-Z0-9_]{3,32}$/.test(username)) return res.status(400).json({error:'Username must be 3-32 letters, numbers, or underscores.'});
+  if (!/^[a-zA-Z0-9_]{1,32}$/.test(username)) return res.status(400).json({error:'Username must be 1-32 letters, numbers, or underscores.'});
   if (users.has(username)) return res.status(409).json({error:'Username already exists.'});
   users.set(username, true);
   const token=crypto.randomBytes(32).toString('hex'); sessions.set(token,username);
   res.setHeader('Set-Cookie',`qf_session=${token}; HttpOnly; SameSite=Lax; Path=/`);
   res.status(201).json({username});
+});
+app.post('/api/join', (req,res) => {
+  const username=String(req.body?.username || '').trim().slice(0,32);
+  if (!/^[a-zA-Z0-9_]{1,32}$/.test(username)) return res.status(400).json({error:'Username must be 1-32 letters, numbers, or underscores.'});
+  users.set(username, true);
+  const token=crypto.randomBytes(32).toString('hex'); sessions.set(token,username);
+  res.setHeader('Set-Cookie',`qf_session=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=2592000`);
+  res.json({username});
 });
 app.post('/api/login', (req,res) => {
   const username=String(req.body?.username || '').trim();
