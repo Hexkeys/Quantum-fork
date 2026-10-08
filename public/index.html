@@ -19,9 +19,10 @@ button,input,textarea{font:inherit}button{cursor:pointer;border:1px solid #28724
 input,textarea{width:100%;background:#050907;border:1px solid var(--line);color:var(--text);padding:12px;margin:7px 0 12px;outline:none}input:focus,textarea:focus{border-color:#2d874d}
 textarea{min-height:110px;resize:vertical}.post{display:grid;grid-template-columns:55px 1fr;gap:16px}.vote{display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--dim)}.vote button{padding:4px 9px}.score{color:var(--green);font-weight:bold}.meta{font-size:12px;color:var(--dim);margin-bottom:8px}.tag{color:var(--green)}.title{font-size:19px;color:#effff3;font-weight:bold}.body{white-space:pre-wrap;color:#b7d8c1}.hidden{display:none}
 .chatMessages{height:300px;overflow:auto;border:1px solid var(--line);padding:12px;background:#050907}.chatMsg{padding:9px 0;border-bottom:1px solid #102318}.chatMsg b{color:var(--green)}
+.termsOverlay{position:fixed;inset:0;background:#020403ee;display:flex;align-items:center;justify-content:center;padding:18px;z-index:100}.termsBox{width:min(760px,100%);max-height:90vh;border:1px solid var(--green);background:#07100b;padding:22px;display:flex;flex-direction:column}.termsScroll{height:55vh;overflow:auto;border:1px solid var(--line);padding:14px;margin:12px 0}.term{padding:7px 0;border-bottom:1px solid #102318;font-size:13px}.termsAccept{display:flex;gap:10px;align-items:flex-start}.termsAccept input{width:auto}.termsBtn:disabled{opacity:.35}
 </style>
 </head>
-<body>
+<body><div id="termsOverlay" class="termsOverlay"><div class="termsBox"><div class="dim">// REQUIRED INITIALIZATION</div><h2 style="color:var(--green)">QUANTUM TERMS & SERVICES</h2><p class="dim">Welcome to Quantum Board. Please review these extremely serious terms.</p><div id="termsScroll" class="termsScroll"></div><label class="termsAccept"><input id="termsCheck" type="checkbox"> I agree to the completely reasonable Quantum Terms.</label><br><button id="termsAcceptBtn" class="termsBtn" disabled>AGREE & ENTER QUANTUM</button></div></div>
 <header><div class="logo">[ QUANTUM // BOARD ]</div><div class="status">● NETWORK ONLINE</div></header>
 
 <main>
@@ -51,6 +52,10 @@ textarea{min-height:110px;resize:vertical}.post{display:grid;grid-template-colum
 <script>
 let deferredPrompt;
 const $=id=>document.getElementById(id);
+for(let i=1;i<=1000;i++){const d=document.createElement('div');d.className='term';d.textContent='§'+String(i).padStart(4,'0')+' '+funnyTerms[(i-1)%funnyTerms.length];$('termsScroll').appendChild(d)}
+$('termsCheck').onchange=()=>{$('termsAcceptBtn').disabled=!$('termsCheck').checked};
+$('termsAcceptBtn').onclick=()=>{if($('termsCheck').checked){sessionStorage.setItem('quantumTermsAccepted','1');$('termsOverlay').remove()}};
+if(sessionStorage.getItem('quantumTermsAccepted')==='1')$('termsOverlay').remove();
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('install').classList.remove('hidden')});
 $('install').onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null}else alert('Use your browser menu and choose “Add to Home Screen”.')};
 $('composeBtn').onclick=()=>$('composer').classList.toggle('hidden');
