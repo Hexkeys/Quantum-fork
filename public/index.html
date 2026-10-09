@@ -30,7 +30,7 @@ textarea{min-height:110px;resize:vertical}.post{display:grid;grid-template-colum
 <section class="hero">
 <div class="dim">// PRIVATE FRIEND NETWORK</div><h1>TRANSMISSION HUB</h1>
 <p class="dim">Post announcements, plans, updates and anything your crew needs to see.</p>
-<div class="actions"><button id="install">⌂ ADD TO HOME SCREEN</button><button id="chatOpen">💬 CHAT ROOM</button><button id="composeBtn">+ NEW TRANSMISSION</button></div>
+<div class="actions"><button id="install">⌂ ADD TO HOME SCREEN</button><button id="chatOpen">💬 CHAT ROOM</button><button id="composeBtn">+ NEW TRANSMISSION</button><button id="explodingForkBtn" type="button">💥 EXPLODING FORK</button></div>
 </section>
 <section id="chatSection" class="sectionBlock chatSection hidden"><div class="sectionHeader"><div><div class="dim">// LIVE FRIEND CHAT</div><h2>CHAT CHANNEL</h2></div><button id="chatClose" type="button">× CLOSE</button></div><section id="chat" class="chat">
 <div class="dim">// FRIEND CHAT ROOM</div>
@@ -567,6 +567,7 @@ termsScroll.addEventListener('scroll',()=>{
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('install').classList.remove('hidden')});
 $('install').onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null}else alert('Use your browser menu and choose “Add to Home Screen”.')};
 $('composeBtn').onclick=()=>{ $('composer').classList.toggle('hidden'); $('chatSection').classList.add('hidden'); clearInterval(chatTimer); };
+$('explodingForkBtn').onclick=()=>{window.location.href='https://exploding-fork.onrender.com'};
 
 $('chatOpen').onclick=()=>{$('chatSection').classList.remove('hidden');loadChat();startChatUpdates();$('chatSection').scrollIntoView({behavior:'smooth',block:'start'})};$('chatClose').onclick=()=>{$('chatSection').classList.add('hidden');clearInterval(chatTimer)};
 async function load(){const r=await fetch('/api/posts',{cache:'no-store'});if(r.status===401){$('loginOverlay').style.display='flex';return}if(!r.ok){$('msg').textContent=' // LOAD FAILED';return}render(await r.json());loadAnnouncement()}
